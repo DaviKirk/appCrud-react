@@ -47,13 +47,33 @@ export default function App(){
   const [buscar, setBuscar] = useState('');
   {/* state para tela de cadastro modal */}
   const[abrir, setAbrir] = useState(false);
-
-
+  {/* state para tela login */}
+  const[abrirLogin, setAbrirLogin] = useState(true);
   useEffect(()=> {
     listarDados();
   },[])
 
 
+  async function login() {
+    const obj = {email,senha};
+    const res = await axios.post(api + 'login.php', obj);
+    if(res.data.success == "Dados Inconrretos!"){
+      mensagemDadosIconrretos();
+    }
+    else{
+      setAbrirLogin(false);
+    }
+  }
+
+  const mensagemDadosIconrretos =() =>
+    Alert.alert(
+      "Erro ao Logar",
+      "Dados Iconrretos",
+      [
+        {text: "OK", onPress: () => setAbrirLogin(true)}
+      ],
+      { cancelable : true }
+    );
     
   async function listarDados(){
     const res = await axios.get(api + 'listar.php?busca=' + buscar);
@@ -174,7 +194,50 @@ export default function App(){
 
    
     
+{/* tela Login */}
+<Modal
+  animationType="slide"
+  transparent={false}
+  visible={abrirLogin}
+>
+  <SafeAreaView
+  style={estilos.modal}
+  >
+    <View style={estilos.modalHeader}>
+      <Text style={estilos.textoModal}>Faça seu Login</Text>
+    </View>
+    <Animatable.View
+     animation="bounceInUp"
+     useNativeDriver
+    >
+      <TextInput
+        type="email"
+        style={estilos.input}
+        placeholder="Insira seu e-mail"
+        value={email}
+        onChangeText={(email) => setEmail(email)}
+      >
+      </TextInput>
+      <TextInput
+        secureTextEntry={true}
+        style={estilos.input}
+        placeholder="Insira seu e-mail"
+        value={senha}
+        onChangeText={(senha) => setSenha(senha)}
+      >
+      </TextInput>
 
+      <TouchableOpacity
+      style={estilos.botaoModal}
+      onPress={login}
+      >
+        <Text style={estilos.textoBotaoModal}>Login</Text>
+      </TouchableOpacity>
+
+
+    </Animatable.View>
+  </SafeAreaView>
+</Modal>
 
 {/*tela cadastro usuario */ }
      <Modal
